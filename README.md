@@ -10,7 +10,7 @@ A proposta do projeto foi validar os requisitos de cupom de desconto e regra de 
 
 - comportamento esperado em cenários funcionais e de limite;
 - casos de erro e regras de validação;
-- automação de testes críticos; e
+- automação de testes críticos;
 - registro de defeitos identificados com evidências.
 
 ## Estrutura do projeto
