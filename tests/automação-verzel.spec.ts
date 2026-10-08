@@ -147,7 +147,7 @@ test('@CA10 permite 5 unidades do mesmo produto e bloqueia a 6ª', async ({
 }) => {
   await page.goto('/');
   await adicionar(page, 'P001', 5);
-  await botaoAdicionar(page, 'P001').click({ force: true }); // 6ª unidade (mesmo se o botão ficar desabilitado)
+  await botaoAdicionar(page, 'P001').click({ force: true });
   await expect(page.locator('#aviso-P001')).toContainText('5');
   await irParaCarrinho(page);
   expect(await quantidadeNoCarrinho(page, 'P001')).toBe(5);
