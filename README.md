@@ -1,85 +1,119 @@
-# Teste-tecnico-Verzel
+# Teste Técnico Verzel
 
-> **História:** Como cliente da Verzel Store, quero aplicar um cupom de desconto e ganhar frete grátis em compras maiores, para pagar menos nas minhas compras.
+Este repositório reúne a solução do teste técnico da Verzel Store, incluindo cenários em Gherkin, casos de teste manuais, automação com Playwright e relatório de bugs encontrados.
 
-Este repositório reúne os entregáveis do teste técnico: cenários de teste (Gherkin), execução manual/exploratória, automação com Playwright, report de bugs e evidências.
+> História de negócio: como cliente da Verzel Store, quero aplicar um cupom de desconto e ganhar frete grátis em compras maiores para pagar menos nas minhas compras.
 
-## Onde está cada entrega
+## Visão geral
 
-| Entrega | Onde | Status |
+A proposta do projeto foi validar os requisitos de cupom de desconto e regra de frete grátis, cobrindo:
+
+- comportamento esperado em cenários funcionais e de limite;
+- casos de erro e regras de validação;
+- automação de testes críticos; e
+- registro de defeitos identificados com evidências.
+
+## Estrutura do projeto
+
+| Entrega | Arquivo | Descrição |
 |---|---|---|
-| Cenários de teste em Gherkin | (CTs.feature)
-| Casos de teste manuais (testes-manuais/casos_de_teste_manuais.xlsx)
-| Automação com Playwright | (automacão-verzel.spec.ts)
-| Report de bugs | (BUGs Encontrados.md)|
+| Cenários em Gherkin | [CTs.feature](CTs.feature) | Definição dos cenários de teste em linguagem natural, com tags por critério de aceite. |
+| Casos de teste manuais | [casos_de_teste_manuais.xlsx](casos_de_teste_manuais.xlsx) | Casos executáveis com passos, resultados esperados, status e evidências. |
+| Automação Playwright | [tests/automação-verzel.spec.ts](tests/automação-verzel.spec.ts) | Testes automatizados dos principais fluxos de risco. |
+| Configuração do Playwright | [playwright.config.ts](playwright.config.ts) | Configuração da suíte e do ambiente de execução. |
+| Relatório de bugs | [BUGs Encontrados.md](BUGs%20Encontrados.md) | Documentação dos defeitos identificados, com descrição e evidências. |
 
 ## Critérios de aceite cobertos
 
-| CA | Regra |
+| Código | Requisito |
 |---|---|
-| CA01 | O cupom `BEMVINDO10` aplica 10% de desconto sobre o subtotal dos produtos |
-| CA02 | O código do cupom não diferencia maiúsculas de minúsculas; espaços no início e no fim são ignorados |
-| CA03 | Cupom inexistente exibe "Cupom inválido." e nenhum desconto é aplicado |
-| CA04 | Cupom fora da validade exibe "Cupom expirado." e nenhum desconto é aplicado |
-| CA05 | Apenas um cupom por vez; para trocar, remove-se o atual e aplica-se outro |
-| CA06 | Frete grátis para subtotal a partir de R$ 200,00, inclusive |
-| CA07 | Abaixo de R$ 200,00: frete fixo de R$ 19,90 e o carrinho informa quanto falta para o frete grátis |
-| CA08 | A regra do frete grátis considera o subtotal antes do desconto do cupom |
-| CA09 | O desconto do cupom não incide sobre o frete |
-| CA10 | Máximo de 5 unidades por produto por pedido (interface e API) |
-| CA11 | Todos os valores são arredondados para 2 casas decimais |
+| CA01 | O cupom BEMVINDO10 aplica 10% de desconto sobre o subtotal dos produtos. |
+| CA02 | O código do cupom não diferencia maiúsculas e minúsculas, e ignora espaços no início e no fim. |
+| CA03 | Cupom inexistente exibe a mensagem “Cupom inválido.” e não aplica desconto. |
+| CA04 | Cupom fora da validade exibe a mensagem “Cupom expirado.” e não aplica desconto. |
+| CA05 | Só pode existir um cupom ativo por vez; a troca deve ocorrer por remoção e re-aplicação. |
+| CA06 | Frete grátis quando o subtotal atinge R$ 200,00 ou mais. |
+| CA07 | Abaixo de R$ 200,00, o frete fixo é R$ 19,90 e o carrinho informa quanto falta para o frete grátis. |
+| CA08 | A regra de frete grátis considera o subtotal antes do desconto do cupom. |
+| CA09 | O desconto do cupom não incide sobre o frete. |
+| CA10 | O limite é de 5 unidades por produto por pedido. |
+| CA11 | Todos os valores devem ser arredondados para 2 casas decimais. |
 
-## Estratégia
+## Entregáveis
 
-1. **Gherkin** descreve o comportamento esperado a partir dos CAs: caminho feliz, valores-limite e cenários negativos. As tags `@CA01`…`@CA11` ligam cada cenário ao critério; `@automatizar` marca os candidatos à automação, `@exploratorio` os que dependem de comportamento não especificado e `@api` os de API.
-2. **Testes manuais** transformam esses cenários em casos executáveis, com passos, resultado esperado e campos para resultado obtido, status, Bug ID e evidência.
-3. **Automação** com 3 testes simples nos pontos de maior risco.
+### 1) Cenários Gherkin
 
-### Cenários Gherkin
+No arquivo [CTs.feature](CTs.feature), os comportamentos foram modelados em português com tags por critério de aceite, incluindo:
 
-- 35 cenários (8 deles esquemas com tabela de exemplos), escritos em português (`# language: pt`).
-- Cobrem todos os CAs, incluindo: variações de maiúsculas e espaços, entradas atípicas no campo de cupom, cupom inválido/expirado com cupom válido já aplicado, troca de cupom, valores-limite do frete e limite de 5 unidades por produto na interface e na API.
+- fluxo principal da regra de cupom e frete grátis;
+- casos de limite e borda;
+- cenários de erro e validação;
+- cenários exploratórios para comportamentos não totalmente especificados;
+- marcação para automação e para revisão manual.
 
-### Casos de teste manuais
+### 2) Casos de teste manuais
 
-- 37 casos (`TM-001` a `TM-037`) na aba **Casos de Teste**, com tipo (funcional, negativo, limite, exploratório) e prioridade.
-- Aba **Resumo**: contagem automática por status e por CA, e percentual executado.
-- Aba **Legenda**: como preencher, exemplo e premissas.
-- Preencha apenas as colunas amarelas (resultado obtido, status, Bug ID, evidência).
+A planilha [casos_de_teste_manuais.xlsx](casos_de_teste_manuais.xlsx) contém casos executáveis, com:
 
-### Automação (Playwright + TypeScript)
+- passos de execução;
+- resultado esperado;
+- resultado obtido;
+- status;
+- identificação do defeito e evidência.
 
-Spec única, sem Page Objects: [`automacão-verzel.spec.ts`](automacão-verzel.spec.ts), com apenas 3 testes simples. A tag do CA vai no título de cada teste.
+### 3) Automação com Playwright
 
-| Teste | CA | O que valida |
+A suíte automatizada está em [tests/automação-verzel.spec.ts](tests/automação-verzel.spec.ts). Ela cobre os fluxos de maior risco e foi estruturada com 3 testes principais:
+
+| Teste | Critério | Validação |
 |---|---|---|
-| `@CA01` | CA01 | `BEMVINDO10` aplica 10% em R$ 100,00: desconto R$ 10,00, frete R$ 19,90, total R$ 109,90 |
-| `@CA03` | CA03 | Cupom inexistente exibe "Cupom inválido." e não aplica desconto 
-| `@CA10` | CA10 | 5 unidades do mesmo produto são aceitas e a 6ª é bloqueada |
+| @CA01 | CA01 | Cupom BEMVINDO10 aplica 10% de desconto em subtotal de R$ 100,00. |
+| @CA03 | CA03 | Cupom inexistente retorna mensagem de erro e não aplica desconto. |
+| @CA10 | CA10 | Permite 5 unidades do mesmo produto e bloqueia a 6ª. |
 
-Os demais critérios (CA02, CA04, CA05, CA07, CA09, CA11) ficam cobertos pelos cenários Gherkin e pelos casos manuais.
+Os demais critérios são contemplados pelos cenários Gherkin e pelos casos manuais.
 
-## Como rodar a automação
+## Como executar a automação
 
-Pré-requisitos: Node.js 18+.
+Pré-requisitos:
+
+- Node.js 18 ou superior
+- npm
+
+Passos:
 
 ```bash
-cd automacao
 npm install
 npx playwright install chromium
-npm test                 # todos os testes
-npx playwright test --grep @CA06   # um critério específico
-npm run report           # abre o relatório HTML
+npx playwright test
+npx playwright test --grep "@CA01"
+npx playwright show-report
 ```
 
-A configuração tira print de todos os testes (aprovados ou não), e guarda vídeo e trace apenas nas falhas. Os prints servem de base para o documento de evidências.
+Observações:
 
-## Limitações e premissas
+- a base URL da aplicação está configurada em [playwright.config.ts](playwright.config.ts);
+- os testes geram evidência visual e capturam trace em falhas;
+- o relatório HTML pode ser aberto com o comando acima;
+- como a suíte foi escrita sem acesso direto ao ambiente real em tempo de execução, pode haver necessidade de ajuste nos seletores do carrinho, caso a interface da loja tenha pequenas variações.
 
-- **Seletores:** baseados no HTML da vitrine e do carrinho (`data-valor` no resumo, `output` de quantidade, `#campo-cupom`). A única suposição que resta é o link/botão do carrinho no cabeçalho, cujo HTML não foi fornecido (função `irParaCarrinho` da spec).
-- **Subtotais:** todos os preços do catálogo (R$ 29,90 a R$ 229,90) são múltiplos de R$ 0,10. Por isso subtotais como R$ 199,99 e R$ 200,01, e o arredondamento no ponto médio (R$ 10,05 → R$ 1,01), não são alcançáveis pela interface. Na automação os testes usam R$ 100,00, R$ 200,00 e R$ 209,50. Esses casos ficam para a API ou para teste exploratório.
-- **Cupons:** os códigos de cupom expirado e de um segundo cupom válido não constam nos critérios de aceite; por isso CA04 e CA05 ficam nos casos manuais.
-- **API:** a automação não cobre a API. O limite de 5 unidades na API (CA10) está nos cenários Gherkin e nos casos manuais.
-- **Cálculo:** assumido total = subtotal − desconto + frete, com arredondamento half-up (0,005 sobe para 0,01).
-- **Mensagens:** só "Cupom inválido." e "Cupom expirado." têm texto definido. As mensagens de limite de 5 unidades e de valor faltante para o frete grátis não estão especificadas e devem ser registradas como exibidas.
-- **Execução:** a automação foi escrita sem acesso ao ambiente e ainda não foi executada contra a loja. Rode uma vez e ajuste `irParaCarrinho` se necessário.
+## Bugs identificados
+
+O relatório de defeitos foi documentado em [BUGs Encontrados.md](BUGs%20Encontrados.md). Os principais itens registrados incluem:
+
+- VZ-001: frete não fica grátis ao atingir o valor mínimo com desconto aplicado;
+- VZ-002: cobrança indevida mesmo com subtotal elegível para frete grátis;
+- VZ-003: carrinho exibe frete incorreto ao atingir o valor mínimo;
+- VZ-004: falha no frete grátis ao aplicar o cupom BEMVINDO10.
+
+## Premissas e limitações
+
+- A automação considera seletores baseados no HTML da vitrine e do carrinho, e a navegação até o carrinho foi implementada como função específica para o ambiente;
+- A regra de frete grátis foi tratada com base em subtotal antes do desconto do cupom;
+- Alguns cenários de validade de cupom e troca de cupom dependem de dados específicos do ambiente e foram priorizados nos testes manuais e em Gherkin;
+- Os resultados das mensagens específicas de limite de quantidade e do valor restante para frete grátis devem ser observados e registrados conforme a interface exibida.
+
+## Conclusão
+
+O projeto entrega uma visão completa do comportamento esperado da Verzel Store em relação a cupons e frete grátis, combinando testes de especificação, validação manual e automação de regressão para os casos de maior risco.
+
